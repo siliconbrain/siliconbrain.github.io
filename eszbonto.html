@@ -410,20 +410,24 @@
         </div>
         <div id="attribution" style="font-size: 0.9em; margin: 1em;">
             <span>Eredeti ötlet: <a href="http://ait.iit.uni-miskolc.hu/~dudas/" target="blank">Dr. Dudás László</a></span><br>
-            <span>HTML5 implementáció: <a href="https://siliconbrain.github.io">Dudás Ádám</a></span><br>
+            <span>HTML5 implementáció: <a href="https://siliconbrain.github.io" target="blank">Dudás Ádám</a></span><br>
             <span>Minden jog fenntartva. 2016</span>
         </div>
         <script>
             var startButton = document.querySelector('#start');
             var ageInput = document.querySelector('#age');
 
+            var leftSideNode = document.querySelector('#left-side');
             var leftNumberNode = document.querySelector('#left-number');
+            var evenOddNode = document.querySelector('#even-odd');
             var evenInput = document.querySelector('#even input');
             var oddInput = document.querySelector('#odd input');
+            var lesserGreaterNode = document.querySelector('#lesser-greater');
             var lesserInput = document.querySelector('#lesser input');
             var greaterInput = document.querySelector('#greater input');
             var verticalSeparatorNode = document.querySelector('#vertical-separator');
             var rightNumberNode = document.querySelector('#right-number');
+            var evenOddLesserGreaterNode = document.querySelector('#even-odd-lesser-greater');
             var evenLesserInput = document.querySelector('#even-lesser input');
             var oddLesserInput = document.querySelector('#odd-lesser input');
             var evenGreaterInput = document.querySelector('#even-greater input');
@@ -487,6 +491,33 @@
                 choiceInputs.forEach(function(element) {element.checked = false});
             }
 
+            function removeChildren(node, children) {
+                children.forEach(function (child){node.removeChild(child)});
+            }
+
+            function appendChildren(node, children) {
+                children.forEach(function (child) {node.appendChild(child)});
+            }
+
+            function shuffleNodeChildren(node, children) {
+                var children = children || Array.from(node.children);
+                removeChildren(node, children);
+                for (var i = children.length; i > 0; i--) {
+                    var j = Math.floor(Math.random() * i);
+                    var c = children[i-1];
+                    children[i-1] = children[j];
+                    children[j] = c;
+                }
+                appendChildren(node, children);
+            }
+
+            function shuffleChoices() {
+                shuffleNodeChildren(evenOddNode);
+                shuffleNodeChildren(lesserGreaterNode);
+                shuffleNodeChildren(leftSideNode, [evenOddNode, lesserGreaterNode]);
+                shuffleNodeChildren(evenOddLesserGreaterNode);
+            }
+
             function toggleSeparatorColor() {
                 verticalSeparatorNode.style.backgroundColor = verticalSeparatorNode.style.backgroundColor === 'white' ? 'red' : 'white'; 
             }
@@ -546,6 +577,7 @@
                 setLeftNumber(leftNumber);
                 setRightNumber(rightNumber);
                 resetChoices();
+                shuffleChoices();
                 toggleSeparatorColor();
                 return {
                     left: leftNumber,
