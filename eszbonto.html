@@ -554,7 +554,7 @@
             }
 
             function getDelayForAge(age) {
-                return (age - 20) * (age - 20) * 0.; // TODO: calc from age
+                return (Math.abs(age - 20) + 5) * 1000;  // TODO: more realistic formula
             }
 
             var currentTimeoutId = null;
