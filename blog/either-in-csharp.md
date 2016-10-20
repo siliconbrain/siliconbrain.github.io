@@ -4,7 +4,7 @@ Have you ever heard about [tagged unions](http://en.wikipedia.org/wiki/Tagged_un
 They are also known as variant records or discriminated unions.
 You are most likely to find them in functional languages.
 But what about primarily object-oriented languages?
-I recently had the need to use this construct in C#, but I wasn't satisfied with the most common solution, so I came up with my own.
+I recently had the need to use this construct in C#, but I wasn’t satisfied with the most common solution, so I came up with my own.
 
 ## The common approach
 
@@ -63,7 +63,7 @@ else
 ```
 
 But this is too error-prone to my liking.
-It's all too easy to accidentally use the wrong getter in the wrong place.
+It’s all too easy to accidentally use the wrong getter in the wrong place.
 
 ## Borrowing from Haskell
 
@@ -95,16 +95,16 @@ case foo of
     Right val -> doWithString(val)
 ```
 
-The first line is a comment, which states `foo`'s type.
-The second line is the head of a *case expression* which says that we'd like to pattern match on the value of `foo`.
-The 3rd line is an alternative of the case expression and it says that if `foo` has been created with the `Left` constructor (it matches the pattern to the left of the arrow), then name its internal value `val` and do what's on the right side of the arrow.
+The first line is a comment, which states `foo`’s type.
+The second line is the head of a *case expression* which says that we’d like to pattern match on the value of `foo`.
+The 3rd line is an alternative of the case expression and it says that if `foo` has been created with the `Left` constructor (it matches the pattern to the left of the arrow), then name its internal value `val` and do what’s on the right side of the arrow.
 The 4th line states the same for the `Right` constructor.
 
-When I thought about this solution and how clean it is, I knew I'd struck gold! I just had to implement it somehow in C#.
+When I thought about this solution and how clean it is, I knew I’d struck gold! I just had to implement it somehow in C#.
 
 ## Implementation
 
-I think there's almost no need for an explanation, so without further ado, here are the interesting parts of the implementation:
+I think there’s almost no need for an explanation, so without further ado, here are the interesting parts of the implementation:
 ```csharp
 public interface IEither<out Tl, out Tr>
 {
@@ -153,7 +153,7 @@ Usage:
 ```csharp
 var foo = Either.Left<int, string>(42);
 // ...
-foo.Case(val => doWithInt(val), val => doWithString(val)); // actually, there's no need for the lambdas,
+foo.Case(val => doWithInt(val), val => doWithString(val)); // actually, there’s no need for the lambdas,
                                                            // but I use it that way most of the time
 ```
 
@@ -164,13 +164,13 @@ The solution could be expanded to 3 or more types easily, but you could also use
 In languages without support for higher-order functions, something similar could be achieved by using the Visitor pattern.
 Boost uses this for C++ with [`boost::variant`](http://www.boost.org/doc/libs/1_51_0/doc/html/variant.html).
 
-Another similar type in Haskell is `Maybe`, which's "common approach" implementation in C# is the `Nullable` type, but which could be implemented using the pattern I used here for `Either`.
+Another similar type in Haskell is `Maybe`, which’s “common approach” implementation in C# is the `Nullable` type, but which could be implemented using the pattern I used here for `Either`.
 Could you think of a use-case where this implementation would be better than `Nullable`?
 Why?
 
 **Thanks for stopping by!**
 
 ---
-<sup id="footnote1">[1](#anchor1)</sup> It's a type constructor, actually.
+<sup id="footnote1">[1](#anchor1)</sup> It’s a type constructor, actually.
 
 <sup id="footnote2">[2](#anchor2)</sup> In Haskell, you have to name constructors. In C#, you can achieve the same effect with static “creator” methods.
