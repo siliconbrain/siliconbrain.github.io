@@ -1,0 +1,21 @@
+{
+  "name": "silicon-compendium",
+  "version": "0.0.0",
+  "author": {
+    "name": "Dudás Ádám",
+    "email": "sir.dudas.adam@gmail.com",
+    "url": "siliconbrain.github.io"
+  },
+  "private": true,
+  "devDependencies": {
+    "handlebars": "^4.0.5",
+    "marked": "^0.3.6",
+    "mkdirp": "^0.5.1"
+  },
+  "scripts": {
+    "build-all": "node build-pages.js"
+  },
+  "config": {
+    "output-dir": "../siliconbrain.github.io"
+  }
+}

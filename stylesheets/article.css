@@ -1,0 +1,36 @@
+body > main {
+    background-color: whitesmoke;
+    border: 1px solid darkgray;
+    padding: 2em;
+    width: 80vw;
+}
+
+body > main > article code {
+    font-family: 'Inconsolata', monospace;
+    font-size: 0.95em;
+}
+
+body > main > article h1 {
+    font-size: 2em;
+}
+
+body > main > article h1::before {
+    content: '>';
+    margin-right: 0.25em;
+    position: relative;
+    top: -0.1em;
+}
+
+body > main > article p {
+    font-family: 'Gentium Basic', serif;
+    text-align: justify;
+}
+
+body > main > article pre {
+    background-color: #fdf6e3;
+}
+
+body > main > footer {
+    margin-top: 7em;
+    text-align: center;
+}

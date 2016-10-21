@@ -1,0 +1,44 @@
+[
+    {
+        "template": "templates/base.partial.html",
+        "partials": {
+            "content": "templates/index.partial.html"
+        },
+        "context": {
+            "stylesheets": [
+                "site.css",
+                "index.css"
+            ],
+            "artifacts": [
+                {
+                    "header": "Észbontó",
+                    "summary": "Figyelemmegosztó-képesség teszt",
+                    "url": "https://siliconbrain.github.com/eszbonto"
+                },
+                {
+                    "header": "Either in C#",
+                    "summary": "Article about implementing sum types in C#",
+                    "url": "/artifacts/either-in-csharp.html"
+                }
+            ]
+        },
+        "target": "index.html"
+    },
+    {
+        "template": "templates/base.partial.html",
+        "partials": {
+            "content": "templates/article.partial.html"
+        },
+        "context": {
+            "subtitle": "Either in C#",
+            "stylesheets": [
+                "site.css",
+                "article.css"
+            ],
+            "article": {
+                "source": "artifacts/either-in-csharp.md"
+            }
+        },
+        "target": "artifacts/either-in-csharp.html"
+    }
+]

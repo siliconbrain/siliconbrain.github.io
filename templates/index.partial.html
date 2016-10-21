@@ -1,0 +1,11 @@
+<div id="artifacts">
+    {{#each artifacts}}
+    <a class="artifact" href="{{this.url}}">
+        <header>{{this.header}}</header>
+        <summary>{{this.summary}}</summary>
+    </a>
+    {{/each}}
+    <div class="stopper">
+        <i class="fa fa-chevron-up" aria-hidden="true"></i>
+    </div>
+</div>
