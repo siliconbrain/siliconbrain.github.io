@@ -1,0 +1,74 @@
+@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css);
+@import url(https://fonts.googleapis.com/css?family=Gentium+Basic:400,400i,700|Inconsolata:400,700|Raleway:400,400i,700&subset=latin-ext);
+
+a {
+    color: #268bd2;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #6c71c4;;
+}
+
+body {
+    align-items: center;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Raleway', sans-serif;
+    margin: 0;
+}
+
+body > header {
+    flex-shrink: 0;
+}
+
+body > header a {
+    align-items: center;
+    color: black;
+    display: flex;
+    flex-direction: column;
+}
+
+body > header a:visited {
+    color: black;
+}
+
+body > header h1 {
+    margin-bottom: 0.1em;
+    text-transform: uppercase;
+}
+
+body > header h2 {
+    align-self: flex-end;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: normal;
+    margin-top: 0.1em;
+    text-transform: lowercase;
+}
+
+body > header h2::before {
+    content: '...';
+}
+
+body > main {
+    flex-grow: 1;
+    margin: 2em 0;
+}
+
+body > footer {
+    flex-shrink: 0;
+    margin-bottom: 1em;
+    text-align: center;
+}
+
+body > footer #license {
+    border: 1px solid darkgray;
+    display: block;
+    padding: 0.5em;
+}
+
+body > footer #license .fa-creative-commons {
+    font-size: 1.2em;
+}
