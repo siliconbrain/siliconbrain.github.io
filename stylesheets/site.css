@@ -21,6 +21,7 @@ body {
 
 body > header {
     flex-shrink: 0;
+    margin: 0 1em;
 }
 
 body > header a {
