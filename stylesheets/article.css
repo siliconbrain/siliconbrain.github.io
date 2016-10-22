@@ -5,6 +5,13 @@ body > main {
     width: 80vw;
 }
 
+@media (max-width: 800px) {
+    body > main {
+        padding: 1em;
+        width: 90vw;
+    }
+}
+
 body > main > article code {
     font-family: 'Inconsolata', monospace;
     font-size: 0.95em;
