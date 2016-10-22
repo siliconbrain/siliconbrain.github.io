@@ -28,6 +28,7 @@ body > main > article p {
 
 body > main > article pre {
     background-color: #fdf6e3;
+    overflow-x: scroll;
 }
 
 body > main > footer {
