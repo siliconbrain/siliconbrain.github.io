@@ -5,7 +5,57 @@ body {
 body > main {
     align-self: stretch;
     display: flex;
-    flex-direction: row;
+    flex-flow: row wrap;
+}
+
+#about {
+    border-right: 1px solid lightgray;
+    padding: 0.5em 1em;
+}
+
+#about > header {
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+}
+
+#about > header .crop {
+    align-items: center;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: 145px;
+}
+
+#about > header .crop img {
+    filter: sepia(40%) brightness(105%);
+}
+
+#about > header h1 {
+    font-size: 1.4em;
+    margin: 0.2em 0;
+}
+
+#about > header h2 {
+    font-size: 1em;
+    font-weight: normal;
+    margin: 0;
+}
+
+#about > header h2::before {
+    content: "alias ";
+    font-size: 0.75em;
+    font-style: italic;
+}
+
+#about > .social {
+    font-size: 0.9em;
+    margin: 0.3em 0;
+}
+
+#about > .social a .fa {
+    margin: 0 0.2em;
 }
 
 #artifacts {
