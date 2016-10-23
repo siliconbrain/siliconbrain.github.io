@@ -19,7 +19,7 @@ body > main {
     flex-direction: column;
 }
 
-#about > header .crop {
+#about > header .profile-picture {
     align-items: center;
     align-self: center;
     display: flex;
@@ -28,7 +28,7 @@ body > main {
     width: 145px;
 }
 
-#about > header .crop img {
+#about > header .profile-picture img {
     filter: sepia(40%) brightness(105%);
 }
 
@@ -127,5 +127,38 @@ body > main {
     #artifacts .artifact,
     #artifacts .stopper {
         width: auto;
+    }
+}
+
+@media (max-height: 650px) and (min-width: 550px) {
+    body {
+        height: auto;
+    }
+
+    body > main {
+        margin: 0.2em 0; 
+        max-height: 90vh;
+    }
+
+    #about {
+        display: flex;
+        flex-direction: row;
+        padding-bottom: 0;
+        padding-top: 0;
+    }
+
+    #about > header {
+        flex-direction: column-reverse;
+    }
+
+    #about .social {
+        align-items: flex-start;
+        font-size: 1em;
+        margin-left: 0.5em;
+    }
+
+    #about .social i {
+        text-align: center;
+        width: 15px;
     }
 }
