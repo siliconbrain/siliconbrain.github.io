@@ -16,6 +16,11 @@
                     "url": "https://siliconbrain.github.com/eszbonto"
                 },
                 {
+                    "header": "fluent-style-sheets",
+                    "summary": "A JavaScript library that enables you to define your CSS from JavaScript.",
+                    "url": "https://www.npmjs.com/package/fluent-style-sheets"
+                },
+                {
                     "header": "Either in C#",
                     "summary": "Article about implementing sum types in C#",
                     "url": "/artifacts/either-in-csharp.html"
