@@ -2,63 +2,84 @@ body {
     height: 100vh;
 }
 
+body > header {
+    position: fixed;
+    top: 0;
+}
+
+body > footer {
+    bottom: 0;
+    position: fixed;
+}
+
 body > main {
     align-self: stretch;
     display: flex;
     flex-direction: row;
+    margin: 110px 0 86px 0;
 }
 
-#about {
-    border-right: 1px solid lightgray;
-    padding: 0.5em 1em;
-}
-
-#about > header {
+#about-me {
     align-items: flex-end;
     display: flex;
     flex-direction: column;
+    padding: 0 1.5em;
 }
 
-#about > header .crop {
+#about-me > header {
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1em;
+}
+
+#about-me > header .profile-picture {
     align-items: center;
-    align-self: center;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     width: 145px;
 }
 
-#about > header .crop img {
+#about-me > header .profile-picture img {
     filter: sepia(40%) brightness(105%);
 }
 
-#about > header h1 {
-    font-size: 1.4em;
-    margin: 0.2em 0;
+#about-me > header h1 {
+    font-size: 1.5em;
+    margin-bottom: 0.25em;
+    margin-top: 0.5em;
 }
 
-#about > header h2 {
+#about-me > header h2 {
     font-size: 1em;
     font-weight: normal;
     margin: 0;
 }
 
-#about > header h2::before {
+#about-me > header h2::before {
     content: "alias ";
     font-size: 0.75em;
     font-style: italic;
 }
 
-#about > .social {
+#about-me > .social {
     align-items: flex-end;
     display: flex;
     flex-direction: column;
-    font-size: 0.9em;
-    margin: 1em 0;
 }
 
-#about > .social a .fa {
+#about-me > .social a {
+    margin: 0.125em;
+}
+
+#about-me > .social a .fa {
     margin: 0 0.2em;
+}
+
+body > main > .separator {
+    border-right: 1px solid lightgray;
+    width: 0px;
 }
 
 #artifacts {
@@ -67,7 +88,7 @@ body > main {
     flex-flow: column wrap;
     flex-grow: 1;
     justify-content: space-between;
-    overflow-x: auto;
+    overflow-x: scroll;
     padding: 0.5em 0;
 }
 
@@ -115,11 +136,11 @@ body > main {
         flex-direction: column;
     }
 
-    #about {
+    #about-me {
         border: none;
     }
 
-    #about > .social {
+    #about-me > .social {
         border-right: 2px solid black;
         padding-right: 0.5em;
     }
@@ -127,5 +148,88 @@ body > main {
     #artifacts .artifact,
     #artifacts .stopper {
         width: auto;
+    }
+}
+
+@media (max-height: 685px) {
+    body > header h1 {
+        font-size: 1.5em;
+    }
+
+    body > main {
+        margin-bottom: 62px;
+        margin-top: 78px;
+    }
+
+    #about-me > header {
+        margin-bottom: 0.5em;
+    }
+
+    #about-me > header > .profile-picture {
+        display: none;
+    }
+
+    #about-me > header > h1 {
+        margin-bottom: 0;
+        margin-top: 0;
+    }
+
+}
+
+@media (max-height: 400px) {
+    #about-me > .social {
+        flex-flow: row wrap;
+        justify-content: space-between;
+        max-width: 148px;
+    }
+
+    #about-me > .social .removable {
+        display: none;
+    }
+
+    #about-me > .social > .email {
+        display: flex;
+        flex-direction: row-reverse;
+        order: 0;
+    }
+
+    #about-me > .social > .deviantart {
+        display: flex;
+        flex-direction: row-reverse;
+        order: 4;
+    }
+
+    #about-me > .social > .facebook {
+        display: flex;
+        flex-direction: row-reverse;
+        order: 2;
+    }
+
+    #about-me > .social > .flickr {
+        display: flex;
+        flex-direction: row-reverse;
+        order: 6;
+    }
+
+    #about-me > .social > .github {
+        order: 5;
+    }
+
+    #about-me > .social > .instagram {
+        order: 3;
+    }
+
+    #about-me > .social > .lastfm {
+        order: 7;
+    }
+
+    #about-me > .social > .linkedin {
+        flex-grow: 1;
+        order: 8;
+        text-align: right;
+    }
+
+    #about-me > .social > .twitter {
+        order: 1;
     }
 }
