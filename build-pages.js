@@ -29,7 +29,7 @@ pages.forEach(({template, partials, context, target}) => {
 });
 
 stylesheets.forEach((stylesheet) => {
-    const inputPath = path.join('./stylesheets', stylesheet);
+    const inputPath = path.join('./resources/stylesheets', stylesheet);
     const outputPath = path.join(outputDir, 'stylesheets', stylesheet);
     mkdirp.sync(path.dirname(outputPath));
     fs.createReadStream(inputPath).pipe(fs.createWriteStream(outputPath));
