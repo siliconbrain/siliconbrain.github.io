@@ -1,5 +1,7 @@
 body {
     height: 100vh;
+    min-height: 310px;
+    min-width: 325px;
 }
 
 body > header {
@@ -126,9 +128,15 @@ body > main > .separator {
     width: 14em;
 }
 
-@media (max-width: 450px) {
+@media (max-width: 460px) {
     body {
         height: auto;
+        position: relative;
+    }
+
+    body > header,
+    body > footer {
+        position: absolute;
     }
 
     body > main {
@@ -137,12 +145,24 @@ body > main > .separator {
     }
 
     #about-me {
+        align-items: center;
         border: none;
+        flex-direction: row;
+    }
+
+    #about-me > header {
+        border-right: 2px dotted black;
+        margin-right: 0.5em;
+        padding-right: 1em;
     }
 
     #about-me > .social {
-        border-right: 2px solid black;
-        padding-right: 0.5em;
+        align-items: flex-start;
+    }
+
+    #about-me > .social > a > .fa {
+        text-align: center;
+        width: 16px;
     }
 
     #artifacts .artifact,
@@ -151,16 +171,13 @@ body > main > .separator {
     }
 }
 
-@media (max-height: 685px) {
+@media (max-width: 440px) {
     body > header h1 {
         font-size: 1.5em;
     }
+}
 
-    body > main {
-        margin-bottom: 62px;
-        margin-top: 78px;
-    }
-
+@media (max-height: 685px) and (min-width: 461px) {
     #about-me > header {
         margin-bottom: 0.5em;
     }
@@ -176,47 +193,67 @@ body > main > .separator {
 
 }
 
-@media (max-height: 400px) {
-    #about-me > .social {
-        flex-flow: row wrap;
-        justify-content: space-between;
-        max-width: 148px;
+@media (max-height: 460px) {
+    body > header h1 {
+        font-size: 1.5em;
     }
 
-    #about-me > .social .removable {
+    body > main {
+        margin-bottom: 62px;
+        margin-top: 78px;
+    }
+}
+
+@media (max-height: 400px) {
+    #about-me > .social {
+        align-content: space-between;
+        flex-flow: row wrap;
+        height: 146px;
+        justify-content: space-between;
+        width: 146px;
+    }
+
+    #about-me > .social > a {
+        margin: 0;
+        padding: 0.5em;
+    }
+
+    #about-me > .social > a > .fa {
+        align-items: center;
+        display: flex;
+        font-size: 1.5em;
+        height: 24px;
+        justify-content: center;
+        margin: 0;
+        width: 24px;
+    }
+
+    #about-me > .social > a > span {
         display: none;
     }
 
     #about-me > .social > .email {
-        display: flex;
-        flex-direction: row-reverse;
         order: 0;
     }
 
     #about-me > .social > .deviantart {
-        display: flex;
-        flex-direction: row-reverse;
-        order: 4;
+        order: 8;
     }
 
     #about-me > .social > .facebook {
-        display: flex;
-        flex-direction: row-reverse;
-        order: 2;
+        order: 1;
     }
 
     #about-me > .social > .flickr {
-        display: flex;
-        flex-direction: row-reverse;
-        order: 6;
-    }
-
-    #about-me > .social > .github {
         order: 5;
     }
 
+    #about-me > .social > .github {
+        order: 6;
+    }
+
     #about-me > .social > .instagram {
-        order: 3;
+        order: 2;
     }
 
     #about-me > .social > .lastfm {
@@ -224,12 +261,22 @@ body > main > .separator {
     }
 
     #about-me > .social > .linkedin {
-        flex-grow: 1;
-        order: 8;
-        text-align: right;
+        order: 4;
     }
 
     #about-me > .social > .twitter {
-        order: 1;
+        order: 3;
     }
+}
+
+@media (max-height: 310px) {
+    body {
+        position: relative;
+    }
+
+    body > header,
+    body > footer {
+        position: absolute;
+    }
+
 }
