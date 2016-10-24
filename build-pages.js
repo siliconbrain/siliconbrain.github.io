@@ -34,3 +34,5 @@ stylesheets.forEach((stylesheet) => {
     mkdirp.sync(path.dirname(outputPath));
     fs.createReadStream(inputPath).pipe(fs.createWriteStream(outputPath));
 });
+
+fs.createReadStream('./resources/favicon.png').pipe(fs.createWriteStream(path.join(outputDir, 'favicon.png')));
