@@ -1,64 +1,87 @@
 body {
     height: 100vh;
+    min-height: 310px;
+    min-width: 325px;
+}
+
+body > header {
+    position: fixed;
+    top: 0;
+}
+
+body > footer {
+    bottom: 0;
+    position: fixed;
 }
 
 body > main {
     align-self: stretch;
     display: flex;
     flex-direction: row;
+    margin: 110px 0 86px 0;
 }
 
-#about {
-    border-right: 1px solid lightgray;
-    padding: 0.5em 1em;
-}
-
-#about > header {
+#about-me {
     align-items: flex-end;
     display: flex;
     flex-direction: column;
+    padding: 0 1.5em;
 }
 
-#about > header .profile-picture {
+#about-me > header {
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1em;
+}
+
+#about-me > header .profile-picture {
     align-items: center;
-    align-self: center;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     width: 145px;
 }
 
-#about > header .profile-picture img {
+#about-me > header .profile-picture img {
     filter: sepia(40%) brightness(105%);
 }
 
-#about > header h1 {
-    font-size: 1.4em;
-    margin: 0.2em 0;
+#about-me > header h1 {
+    font-size: 1.5em;
+    margin-bottom: 0.25em;
+    margin-top: 0.5em;
 }
 
-#about > header h2 {
+#about-me > header h2 {
     font-size: 1em;
     font-weight: normal;
     margin: 0;
 }
 
-#about > header h2::before {
+#about-me > header h2::before {
     content: "alias ";
     font-size: 0.75em;
     font-style: italic;
 }
 
-#about > .social {
+#about-me > .social {
     align-items: flex-end;
     display: flex;
     flex-direction: column;
-    font-size: 0.9em;
-    margin: 1em 0;
 }
 
-#about > .social a .fa {
+#about-me > .social a {
+    margin: 0.125em;
+}
+
+#about-me > .social a .fa {
     margin: 0 0.2em;
+}
+
+body > main > .separator {
+    border-right: 1px solid lightgray;
+    width: 0px;
 }
 
 #artifacts {
@@ -67,7 +90,7 @@ body > main {
     flex-flow: column wrap;
     flex-grow: 1;
     justify-content: space-between;
-    overflow-x: auto;
+    overflow-x: scroll;
     padding: 0.5em 0;
 }
 
@@ -105,9 +128,15 @@ body > main {
     width: 14em;
 }
 
-@media (max-width: 450px) {
+@media (max-width: 460px) {
     body {
         height: auto;
+        position: relative;
+    }
+
+    body > header,
+    body > footer {
+        position: absolute;
     }
 
     body > main {
@@ -115,13 +144,25 @@ body > main {
         flex-direction: column;
     }
 
-    #about {
+    #about-me {
+        align-items: center;
         border: none;
+        flex-direction: row;
     }
 
-    #about > .social {
-        border-right: 2px solid black;
-        padding-right: 0.5em;
+    #about-me > header {
+        border-right: 2px dotted black;
+        margin-right: 0.5em;
+        padding-right: 1em;
+    }
+
+    #about-me > .social {
+        align-items: flex-start;
+    }
+
+    #about-me > .social > a > .fa {
+        text-align: center;
+        width: 16px;
     }
 
     #artifacts .artifact,
@@ -130,35 +171,112 @@ body > main {
     }
 }
 
-@media (max-height: 650px) and (min-width: 550px) {
-    body {
-        height: auto;
+@media (max-width: 440px) {
+    body > header h1 {
+        font-size: 1.5em;
+    }
+}
+
+@media (max-height: 685px) and (min-width: 461px) {
+    #about-me > header {
+        margin-bottom: 0.5em;
+    }
+
+    #about-me > header > .profile-picture {
+        display: none;
+    }
+
+    #about-me > header > h1 {
+        margin-bottom: 0;
+        margin-top: 0;
+    }
+
+}
+
+@media (max-height: 460px) {
+    body > header h1 {
+        font-size: 1.5em;
     }
 
     body > main {
-        margin: 0.2em 0; 
-        max-height: 90vh;
+        margin-bottom: 62px;
+        margin-top: 78px;
+    }
+}
+
+@media (max-height: 400px) {
+    #about-me > .social {
+        align-content: space-between;
+        flex-flow: row wrap;
+        height: 146px;
+        justify-content: space-between;
+        width: 146px;
     }
 
-    #about {
+    #about-me > .social > a {
+        margin: 0;
+        padding: 0.5em;
+    }
+
+    #about-me > .social > a > .fa {
+        align-items: center;
         display: flex;
-        flex-direction: row;
-        padding-bottom: 0;
-        padding-top: 0;
+        font-size: 1.5em;
+        height: 24px;
+        justify-content: center;
+        margin: 0;
+        width: 24px;
     }
 
-    #about > header {
-        flex-direction: column-reverse;
+    #about-me > .social > a > span {
+        display: none;
     }
 
-    #about .social {
-        align-items: flex-start;
-        font-size: 1em;
-        margin-left: 0.5em;
+    #about-me > .social > .email {
+        order: 0;
     }
 
-    #about .social i {
-        text-align: center;
-        width: 15px;
+    #about-me > .social > .deviantart {
+        order: 8;
     }
+
+    #about-me > .social > .facebook {
+        order: 1;
+    }
+
+    #about-me > .social > .flickr {
+        order: 5;
+    }
+
+    #about-me > .social > .github {
+        order: 6;
+    }
+
+    #about-me > .social > .instagram {
+        order: 2;
+    }
+
+    #about-me > .social > .lastfm {
+        order: 7;
+    }
+
+    #about-me > .social > .linkedin {
+        order: 4;
+    }
+
+    #about-me > .social > .twitter {
+        order: 3;
+    }
+}
+
+@media (max-height: 310px) {
+    body {
+        position: relative;
+    }
+
+    body > header,
+    body > footer {
+        position: absolute;
+    }
+
 }
