@@ -1,5 +1,6 @@
 const fs = require('fs');
 const handlebars = require('handlebars');
+const hljs = require('highlight.js');
 const marked = require('marked');
 const mkdirp = require('mkdirp');
 const path = require('path');
@@ -34,11 +35,16 @@ function update(sourcePath, destinationPath, callback) {
     });
 }
 
+const targetRoot = process.env.npm_package_config_target_root;
+
 const pages = require('./pages.json');
 
 handlebars.registerHelper('render', (source) => marked(fs.readFileSync(source, {encoding: 'utf8'})));
 
-const targetRoot = process.env.npm_package_config_target_root;
+marked.setOptions({
+    highlight: (code, lang) => hljs.highlight(lang, code, true).value,
+});
+
 const stylesheets = [];
 
 pages.forEach(({template, partials, context, target}) => {

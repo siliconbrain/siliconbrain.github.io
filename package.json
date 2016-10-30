@@ -9,6 +9,7 @@
   "private": true,
   "devDependencies": {
     "handlebars": "^4.0.5",
+    "highlight.js": "^9.7.0",
     "marked": "^0.3.6",
     "mkdirp": "^0.5.1"
   },

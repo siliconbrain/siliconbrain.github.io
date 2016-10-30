@@ -1,6 +1,7 @@
 body > main {
     background-color: whitesmoke;
     border: 1px solid darkgray;
+    max-width: 1280px;
     padding: 2em;
     width: 80vw;
 }
@@ -35,7 +36,9 @@ body > main > article p {
 
 body > main > article pre {
     background-color: #fdf6e3;
-    overflow-x: scroll;
+    border: 1px solid lightgray;
+    overflow: auto;
+    padding: 0.25em;
 }
 
 body > main > footer {

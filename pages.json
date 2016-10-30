@@ -38,7 +38,8 @@
             "subtitle": "Either in C#",
             "stylesheets": [
                 "site.css",
-                "article.css"
+                "article.css",
+                "highlight.css"
             ],
             "article": {
                 "source": "artifacts/either-in-csharp.md"
