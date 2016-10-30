@@ -16,6 +16,7 @@
         <link rel="icon" href="favicon.png" type="image/png">
         <link rel="stylesheet" type="text/css" href="/stylesheets/site.css">
         <link rel="stylesheet" type="text/css" href="/stylesheets/article.css">
+        <link rel="stylesheet" type="text/css" href="/stylesheets/highlight.css">
     </head>
     <body>
         <header>
@@ -25,161 +26,161 @@
             </a>
         </header>
         <main>
-            <article>
-                <h1 id="either-in-c-">Either in C#</h1>
-            <p>Have you ever heard about <a href="http://en.wikipedia.org/wiki/Tagged_union">tagged unions</a>?
-            They are also known as variant records or discriminated unions.
-            You are most likely to find them in functional languages.
-            But what about primarily object-oriented languages?
-            I recently had the need to use this construct in C#, but I wasn’t satisfied with the most common solution, so I came up with my own.</p>
-            <h2 id="the-common-approach">The common approach</h2>
-            <p>The most common solution to tagged unions of two types goes something like this:</p>
-            <pre><code class="lang-csharp">class TaggedUnion&lt;T1, T2&gt;
-            {
-                private readonly bool isT1; // this is the tag; it could be implemented with an enum for more clarity
-                private readonly object val;
-            
-                public T1 Val1
-                {
-                    get
-                    {
-                        if (!isT1) throw new InvalidOperationException();
-                        return (T1)val;
-                    }
-                }
-            
-                public T2 Val2
-                {
-                    get
-                    {
-                        if (isT1) throw new InvalidOperationException();
-                        return (T2)val;
-                    }
-                }
-            
-                public bool IsT1
-                {
-                    get { return isT1; }
-                }
-            
-                public TaggedUnion(T1 val)
-                {
-                    this.val = val;
-                    isT1 = true;
-                }
-            
-                public TaggedUnion(T2 val)
-                {
-                    this.val = val;
-                    isT1 = false;
-                }
-            }
-            </code></pre>
-            <p>Use it like this:</p>
-            <pre><code class="lang-csharp">var foo = new TaggedUnion&lt;int, string&gt;(42);
-            // ...
-            if (foo.IsT1)
-                doWithInt(foo.Val1);
-            else
-                doWithString(foo.Val2);
-            </code></pre>
-            <p>But this is too error-prone to my liking.
-            It’s all too easy to accidentally use the wrong getter in the wrong place.</p>
-            <h2 id="borrowing-from-haskell">Borrowing from Haskell</h2>
-            <p>Haskell has a built-in type<sup id="anchor1"><a href="#footnote1">1</a></sup> called <code>Either</code>, which can be used as a tagged union of two types. Its definition is:</p>
-            <pre><code class="lang-haskell">data Either a b = Left a
-                            | Right b
-            </code></pre>
-            <p>In C# parlance, I would describe this as a <code>class</code> named <code>Either</code>, having two generic parameters <code>a</code> and <code>b</code>.
-            This class has two (named) constructors<sup id="anchor2"><a href="#footnote2">2</a></sup>: <code>Left</code> and <code>Right</code>.
-            <code>Left</code> takes a parameter of type <code>a</code>, <code>Right</code> takes a parameter of type <code>b</code>.
-            In code:</p>
-            <pre><code class="lang-csharp">class Either&lt;a, b&gt;
-            {
-                public static Either&lt;a, b&gt; Left(a val) { /* ... */ }
-                public static Either&lt;a, b&gt; Right(b val) { /* ... */ }
-            }
-            </code></pre>
-            <p>This has a remarkable resemblance to the common implementation.
-            The true difference is in the method of access to the internal values.
-            Haskell uses a mix of its <a href="http://www.haskell.org/tutorial/patterns.html">case expression and pattern matching</a>:</p>
-            <pre><code class="lang-haskell">-- foo :: Either Int String
-            case foo of
-                Left val -&gt; doWithInt(val)
-                Right val -&gt; doWithString(val)
-            </code></pre>
-            <p>The first line is a comment, which states <code>foo</code>’s type.
-            The second line is the head of a <em>case expression</em> which says that we’d like to pattern match on the value of <code>foo</code>.
-            The 3rd line is an alternative of the case expression and it says that if <code>foo</code> has been created with the <code>Left</code> constructor (it matches the pattern to the left of the arrow), then name its internal value <code>val</code> and do what’s on the right side of the arrow.
-            The 4th line states the same for the <code>Right</code> constructor.</p>
-            <p>When I thought about this solution and how clean it is, I knew I’d struck gold! I just had to implement it somehow in C#.</p>
-            <h2 id="implementation">Implementation</h2>
-            <p>I think there’s almost no need for an explanation, so without further ado, here are the interesting parts of the implementation:</p>
-            <pre><code class="lang-csharp">public interface IEither&lt;out Tl, out Tr&gt;
-            {
-                U Case&lt;U&gt;(Func&lt;Tl, U&gt; ofLeft, Func&lt;Tr, U&gt; ofRight);
-                void Case(Action&lt;Tl&gt; ofLeft, Action&lt;Tr&gt; ofRight);
-            }
-            
-            public static class Either
-            {
-                private sealed class LeftImpl&lt;Tl, Tr&gt; : IEither&lt;Tl, Tr&gt;
-                {
-                    private readonly Tl value;
-            
-                    public LeftImpl(Tl value)
-                    {
-                        this.value = value;
-                    }
-            
-                    public U Case&lt;U&gt;(Func&lt;Tl, U&gt; ofLeft, Func&lt;Tr, U&gt; ofRight)
-                    {
-                        if (ofLeft == null)
-                            throw new ArgumentNullException(&quot;ofLeft&quot;);
-            
-                        return ofLeft(value);
-                    }
-            
-                    public void Case(Action&lt;Tl&gt; ofLeft, Action&lt;Tr&gt; ofRight)
-                    {
-                        if (ofLeft == null)
-                            throw new ArgumentNullException(&quot;ofLeft&quot;);
-            
-                        ofLeft(value);
-                    }
-                }
-            
-                public static IEither&lt;Tl, Tr&gt; Left&lt;Tl, Tr&gt;(Tl value)
-                {
-                    return new LeftImpl&lt;Tl, Tr&gt;(value);
-                }
-            }
-            </code></pre>
-            <p>The implementation for the <code>Right</code> case follows the same pattern as for <code>Left</code>.
-            You can find the full code with comments <a href="https://gist.github.com/3923828">here</a>.
-            Usage:</p>
-            <pre><code class="lang-csharp">var foo = Either.Left&lt;int, string&gt;(42);
-            // ...
-            foo.Case(val =&gt; doWithInt(val), val =&gt; doWithString(val)); // actually, there’s no need for the lambdas,
-                                                                       // but I use it that way most of the time
-            </code></pre>
-            <h2 id="addendum">Addendum</h2>
-            <p>The solution could be expanded to 3 or more types easily, but you could also use nesting, e.g.: <code>IEither&lt;int, IEither&lt;string, bool&gt;&gt; bar;</code></p>
-            <p>In languages without support for higher-order functions, something similar could be achieved by using the Visitor pattern.
-            Boost uses this for C++ with <a href="http://www.boost.org/doc/libs/1_51_0/doc/html/variant.html"><code>boost::variant</code></a>.</p>
-            <p>Another similar type in Haskell is <code>Maybe</code>, which’s “common approach” implementation in C# is the <code>Nullable</code> type, but which could be implemented using the pattern I used here for <code>Either</code>.
-            Could you think of a use-case where this implementation would be better than <code>Nullable</code>?
-            Why?</p>
-            <p><strong>Thanks for stopping by!</strong></p>
-            <hr>
-            <p><sup id="footnote1"><a href="#anchor1">1</a></sup> It’s a type constructor, actually.</p>
-            <p><sup id="footnote2"><a href="#anchor2">2</a></sup> In Haskell, you have to name constructors. In C#, you can achieve the same effect with static “creator” methods.</p>
-            
-            </article>
-            <footer>
-                <hr>
-                Found a typo? Fix it <a href="https://github.com/siliconbrain/siliconbrain.github.io/blob/source/artifacts/either-in-csharp.md">here <i class="fa fa-github"></i></a>!
-            </footer>
+<article>
+    <h1 id="either-in-c-">Either in C#</h1>
+<p>Have you ever heard about <a href="http://en.wikipedia.org/wiki/Tagged_union">tagged unions</a>?
+They are also known as variant records or discriminated unions.
+You are most likely to find them in functional languages.
+But what about primarily object-oriented languages?
+I recently had the need to use this construct in C#, but I wasn’t satisfied with the most common solution, so I came up with my own.</p>
+<h2 id="the-common-approach">The common approach</h2>
+<p>The most common solution to tagged unions of two types goes something like this:</p>
+<pre><code class="lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">TaggedUnion</span>&lt;<span class="hljs-title">T1</span>, <span class="hljs-title">T2</span>&gt;
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> <span class="hljs-keyword">bool</span> isT1; <span class="hljs-comment">// this is the tag; it could be implemented with an enum for more clarity</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> <span class="hljs-keyword">object</span> val;
+
+    <span class="hljs-keyword">public</span> T1 Val1
+    {
+        <span class="hljs-keyword">get</span>
+        {
+            <span class="hljs-keyword">if</span> (!isT1) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> InvalidOperationException();
+            <span class="hljs-keyword">return</span> (T1)val;
+        }
+    }
+
+    <span class="hljs-keyword">public</span> T2 Val2
+    {
+        <span class="hljs-keyword">get</span>
+        {
+            <span class="hljs-keyword">if</span> (isT1) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> InvalidOperationException();
+            <span class="hljs-keyword">return</span> (T2)val;
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> IsT1
+    {
+        <span class="hljs-keyword">get</span> { <span class="hljs-keyword">return</span> isT1; }
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">TaggedUnion</span>(<span class="hljs-params">T1 val</span>)
+    </span>{
+        <span class="hljs-keyword">this</span>.val = val;
+        isT1 = <span class="hljs-literal">true</span>;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">TaggedUnion</span>(<span class="hljs-params">T2 val</span>)
+    </span>{
+        <span class="hljs-keyword">this</span>.val = val;
+        isT1 = <span class="hljs-literal">false</span>;
+    }
+}
+</code></pre>
+<p>Use it like this:</p>
+<pre><code class="lang-csharp"><span class="hljs-keyword">var</span> foo = <span class="hljs-keyword">new</span> TaggedUnion&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">string</span>&gt;(<span class="hljs-number">42</span>);
+<span class="hljs-comment">// ...</span>
+<span class="hljs-keyword">if</span> (foo.IsT1)
+    doWithInt(foo.Val1);
+<span class="hljs-function"><span class="hljs-keyword">else</span>
+    <span class="hljs-title">doWithString</span>(<span class="hljs-params">foo.Val2</span>)</span>;
+</code></pre>
+<p>But this is too error-prone to my liking.
+It’s all too easy to accidentally use the wrong getter in the wrong place.</p>
+<h2 id="borrowing-from-haskell">Borrowing from Haskell</h2>
+<p>Haskell has a built-in type<sup id="anchor1"><a href="#footnote1">1</a></sup> called <code>Either</code>, which can be used as a tagged union of two types. Its definition is:</p>
+<pre><code class="lang-haskell"><span class="hljs-class"><span class="hljs-keyword">data</span> <span class="hljs-type">Either</span> a b = <span class="hljs-type">Left</span> a</span>
+                | <span class="hljs-type">Right</span> b
+</code></pre>
+<p>In C# parlance, I would describe this as a <code>class</code> named <code>Either</code>, having two generic parameters <code>a</code> and <code>b</code>.
+This class has two (named) constructors<sup id="anchor2"><a href="#footnote2">2</a></sup>: <code>Left</code> and <code>Right</code>.
+<code>Left</code> takes a parameter of type <code>a</code>, <code>Right</code> takes a parameter of type <code>b</code>.
+In code:</p>
+<pre><code class="lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">Either</span>&lt;<span class="hljs-title">a</span>, <span class="hljs-title">b</span>&gt;
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Either&lt;a, b&gt; <span class="hljs-title">Left</span>(<span class="hljs-params">a val</span>) </span>{ <span class="hljs-comment">/* ... */</span> }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Either&lt;a, b&gt; <span class="hljs-title">Right</span>(<span class="hljs-params">b val</span>) </span>{ <span class="hljs-comment">/* ... */</span> }
+}
+</code></pre>
+<p>This has a remarkable resemblance to the common implementation.
+The true difference is in the method of access to the internal values.
+Haskell uses a mix of its <a href="http://www.haskell.org/tutorial/patterns.html">case expression and pattern matching</a>:</p>
+<pre><code class="lang-haskell"><span class="hljs-comment">-- foo :: Either Int String</span>
+<span class="hljs-title">case</span> foo <span class="hljs-keyword">of</span>
+    <span class="hljs-type">Left</span> val -&gt; doWithInt(val)
+    <span class="hljs-type">Right</span> val -&gt; doWithString(val)
+</code></pre>
+<p>The first line is a comment, which states <code>foo</code>’s type.
+The second line is the head of a <em>case expression</em> which says that we’d like to pattern match on the value of <code>foo</code>.
+The 3rd line is an alternative of the case expression and it says that if <code>foo</code> has been created with the <code>Left</code> constructor (it matches the pattern to the left of the arrow), then name its internal value <code>val</code> and do what’s on the right side of the arrow.
+The 4th line states the same for the <code>Right</code> constructor.</p>
+<p>When I thought about this solution and how clean it is, I knew I’d struck gold! I just had to implement it somehow in C#.</p>
+<h2 id="implementation">Implementation</h2>
+<p>I think there’s almost no need for an explanation, so without further ado, here are the interesting parts of the implementation:</p>
+<pre><code class="lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title">IEither</span>&lt;<span class="hljs-title">out</span> <span class="hljs-title">Tl</span>, <span class="hljs-title">out</span> <span class="hljs-title">Tr</span>&gt;
+{
+    U Case&lt;U&gt;(Func&lt;Tl, U&gt; ofLeft, Func&lt;Tr, U&gt; ofRight);
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Case</span>(<span class="hljs-params">Action&lt;Tl&gt; ofLeft, Action&lt;Tr&gt; ofRight</span>)</span>;
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Either</span>
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">LeftImpl</span>&lt;<span class="hljs-title">Tl</span>, <span class="hljs-title">Tr</span>&gt; : <span class="hljs-title">IEither</span>&lt;<span class="hljs-title">Tl</span>, <span class="hljs-title">Tr</span>&gt;
+    {
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> Tl <span class="hljs-keyword">value</span>;
+
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">LeftImpl</span>(<span class="hljs-params">Tl <span class="hljs-keyword">value</span></span>)
+        </span>{
+            <span class="hljs-keyword">this</span>.<span class="hljs-keyword">value</span> = <span class="hljs-keyword">value</span>;
+        }
+
+        <span class="hljs-keyword">public</span> U Case&lt;U&gt;(Func&lt;Tl, U&gt; ofLeft, Func&lt;Tr, U&gt; ofRight)
+        {
+            <span class="hljs-keyword">if</span> (ofLeft == <span class="hljs-literal">null</span>)
+                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> ArgumentNullException(<span class="hljs-string">"ofLeft"</span>);
+
+            <span class="hljs-keyword">return</span> ofLeft(<span class="hljs-keyword">value</span>);
+        }
+
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Case</span>(<span class="hljs-params">Action&lt;Tl&gt; ofLeft, Action&lt;Tr&gt; ofRight</span>)
+        </span>{
+            <span class="hljs-keyword">if</span> (ofLeft == <span class="hljs-literal">null</span>)
+                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> ArgumentNullException(<span class="hljs-string">"ofLeft"</span>);
+
+            ofLeft(<span class="hljs-keyword">value</span>);
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> IEither&lt;Tl, Tr&gt; Left&lt;Tl, Tr&gt;(Tl <span class="hljs-keyword">value</span>)
+    {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> LeftImpl&lt;Tl, Tr&gt;(<span class="hljs-keyword">value</span>);
+    }
+}
+</code></pre>
+<p>The implementation for the <code>Right</code> case follows the same pattern as for <code>Left</code>.
+You can find the full code with comments <a href="https://gist.github.com/3923828">here</a>.
+Usage:</p>
+<pre><code class="lang-csharp"><span class="hljs-keyword">var</span> foo = Either.Left&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">string</span>&gt;(<span class="hljs-number">42</span>);
+<span class="hljs-comment">// ...</span>
+foo.Case(val =&gt; doWithInt(val), val =&gt; doWithString(val)); <span class="hljs-comment">// actually, there’s no need for the lambdas,</span>
+                                                           <span class="hljs-comment">// but I use it that way most of the time</span>
+</code></pre>
+<h2 id="addendum">Addendum</h2>
+<p>The solution could be expanded to 3 or more types easily, but you could also use nesting, e.g.: <code>IEither&lt;int, IEither&lt;string, bool&gt;&gt; bar;</code></p>
+<p>In languages without support for higher-order functions, something similar could be achieved by using the Visitor pattern.
+Boost uses this for C++ with <a href="http://www.boost.org/doc/libs/1_51_0/doc/html/variant.html"><code>boost::variant</code></a>.</p>
+<p>Another similar type in Haskell is <code>Maybe</code>, which’s “common approach” implementation in C# is the <code>Nullable</code> type, but which could be implemented using the pattern I used here for <code>Either</code>.
+Could you think of a use-case where this implementation would be better than <code>Nullable</code>?
+Why?</p>
+<p><strong>Thanks for stopping by!</strong></p>
+<hr>
+<p><sup id="footnote1"><a href="#anchor1">1</a></sup> It’s a type constructor, actually.</p>
+<p><sup id="footnote2"><a href="#anchor2">2</a></sup> In Haskell, you have to name constructors. In C#, you can achieve the same effect with static “creator” methods.</p>
+
+</article>
+<footer>
+    <hr>
+    Found a typo? Fix it <a href="https://github.com/siliconbrain/siliconbrain.github.io/blob/source/artifacts/either-in-csharp.md">here <i class="fa fa-github"></i></a>!
+</footer>
         </main>
         <footer>
             <a href="https://creativecommons.org/licenses/by/4.0/" id="license">
