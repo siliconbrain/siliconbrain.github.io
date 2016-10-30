@@ -16,6 +16,6 @@
     "build-all": "node build-pages.js"
   },
   "config": {
-    "output-dir": "./dist"
+    "target-root": "./dist"
   }
 }
