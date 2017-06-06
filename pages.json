@@ -11,6 +11,11 @@
             ],
             "artifacts": [
                 {
+                    "header": "Transcriber",
+                    "summary": "A simple tool for transcribing audio.",
+                    "url": "https://siliconbrain.github.io/transcriber"
+                },
+                {
                     "header": "Észbontó",
                     "summary": "Figyelemmegosztó-képesség teszt",
                     "url": "https://siliconbrain.github.com/eszbonto"
