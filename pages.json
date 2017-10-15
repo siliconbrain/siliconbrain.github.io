@@ -11,6 +11,11 @@
             ],
             "artifacts": [
                 {
+                    "header": "reactive-require",
+                    "summary": "A Node.js package that lets you require modules as reactive streams",
+                    "url": "https://www.npmjs.com/package/reactive-require"
+                },
+                {
                     "header": "Transcriber",
                     "summary": "A simple tool for transcribing audio.",
                     "url": "https://siliconbrain.github.io/transcriber"
