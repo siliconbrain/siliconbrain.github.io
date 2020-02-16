@@ -31,7 +31,7 @@ function update(sourcePath, destinationPath, callback) {
     isUpToDate(sourcePath, destinationPath, (err, upToDate) => {
         if (err) callback(err);
         else if (upToDate) callback();
-        else copy(sourcePath, destinationPath, callback); 
+        else copy(sourcePath, destinationPath, callback);
     });
 }
 
